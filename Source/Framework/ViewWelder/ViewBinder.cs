@@ -35,106 +35,119 @@ namespace ViewWelder
             var methods = viewModel.GetType()
                 .GetMethods(BindingFlags.Instance | BindingFlags.Public);
 
-            var controlFields = view.GetType()
+            var controls = view.GetType()
                 .GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
-                .Where(x => typeof(Control).IsAssignableFrom(x.FieldType));
+                .Where(x => typeof(Control).IsAssignableFrom(x.FieldType))
+                .ToDictionary(x => x.Name, x => (Control)x.GetValue(view));
 
-            foreach (var property in properties)
+            foreach (var pair in controls)
             {
-                var controlField = controlFields.SingleOrDefault(x => x.Name == property.Name);
+                var controlName = pair.Key;
+                var control = pair.Value;
+                var controlType = control.GetType();
 
-                if (controlField == null)
-                    continue;
-
-                var control = (Control)controlField.GetValue(view);
-
-                BindControlValue(control, viewModel, property);
-
-                if (control is ItemsControl)
+                if (controlType == typeof(Button))
                 {
-                    var itemsSourceProperty = properties.SingleOrDefault(x => x.Name == this.inflector.InflectItemsSourceName(control.Name));
-
-                    if (itemsSourceProperty != null)
-                    {
-                        BindItemsSource((ItemsControl)control, viewModel, itemsSourceProperty);
-                    }
+                    BindButton((Button)control, viewModel, properties, methods);
                 }
-            }
-
-            foreach (var method in methods)
-            {
-                var controlField = controlFields.SingleOrDefault(x => x.Name == method.Name);
-
-                if (controlField == null)
-                    continue;
-
-                var control = (Control)controlField.GetValue(view);
-
-                var isEnabledProperty = properties.SingleOrDefault(x => x.Name == this.inflector.InflectIsEnabledName(control.Name));
-
-                BindControlAction(control, viewModel, method, isEnabledProperty);                
+                else if (controlType == typeof(ComboBox))
+                {
+                    BindComboBox((ComboBox)control, viewModel, properties);
+                }
+                else if (controlType == typeof(TextBox))
+                {
+                    BindTextBox((TextBox)control, viewModel, properties);
+                }
             }
         }
 
-        private void BindControlValue(Control control, object viewModel, PropertyInfo property)
+        private void BindButton(Button control, ViewModelBase viewModel, PropertyInfo[] properties, MethodInfo[] methods)
+        {
+            var clickMethod = methods.SingleOrDefault(x => x.Name == this.inflector.InflectClickMethodName(control.Name));
+
+            if (clickMethod != null && clickMethod.GetParameters().Count() == 0)
+            {
+                control.Click += (s, e) => clickMethod.Invoke(viewModel, null);
+            }
+
+            var isEnabledProperty = properties.SingleOrDefault(x => x.Name == this.inflector.InflectIsEnabledPropertyName(control.Name));
+
+            if (isEnabledProperty != null && isEnabledProperty.PropertyType == typeof(bool))
+            {
+                var binding = new Binding()
+                {
+                    Source = viewModel,
+                    Path = new PropertyPath(isEnabledProperty.Name),
+                    Mode = BindingMode.OneWay
+                };
+
+                BindingOperations.SetBinding(control, Button.IsEnabledProperty, binding);
+            }
+        }
+
+        private void BindComboBox(ComboBox control, ViewModelBase viewModel, PropertyInfo[] properties)
+        {
+            BindItemsControl(control, viewModel, properties);
+
+            var selectedItemProperty = properties.SingleOrDefault(x => x.Name == this.inflector.InflectSelectedItemPropertyName(control.Name));
+
+            if (selectedItemProperty != null)
+            {
+                BindValueProperty(control, ComboBox.SelectedItemProperty, viewModel, selectedItemProperty);
+            }
+        }
+
+        private void BindItemsControl(ItemsControl control, ViewModelBase viewModel, PropertyInfo[] properties)
+        {
+            var itemsSourceProperty = properties.SingleOrDefault(x => x.Name == this.inflector.InflectItemsSourcePropertyName(control.Name));
+
+            if (itemsSourceProperty != null)
+            {
+                var binding = new Binding()
+                {
+                    Source = viewModel,
+                    Path = new PropertyPath(itemsSourceProperty.Name),
+                    Mode = BindingMode.OneWay
+                };
+
+                BindingOperations.SetBinding(control, ItemsControl.ItemsSourceProperty, binding);
+            }
+        }
+
+        private void BindTextBox(TextBox control, ViewModelBase viewModel, PropertyInfo[] properties)
+        {
+            var textProperty = properties.SingleOrDefault(x => x.Name == this.inflector.InflectTextPropertyName(control.Name));
+
+            if (textProperty != null && textProperty.PropertyType == typeof(string))
+            {
+                BindValueProperty(control, TextBox.TextProperty, viewModel, textProperty, UpdateSourceTrigger.PropertyChanged);
+            }
+        }
+
+        private void BindValueProperty(
+            Control control,
+            DependencyProperty controlProperty,
+            object viewModel,
+            PropertyInfo viewModelProperty,
+            UpdateSourceTrigger updateSourceTrigger = UpdateSourceTrigger.Default)
         {
             var binding = new Binding()
             {
                 Source = viewModel,
-                Path = new PropertyPath(property.Name),
+                Path = new PropertyPath(viewModelProperty.Name),
+                UpdateSourceTrigger = updateSourceTrigger
             };
 
-            if (property.CanRead && property.CanWrite)
+            if (viewModelProperty.CanRead && viewModelProperty.CanWrite)
             {
                 binding.Mode = BindingMode.TwoWay;
             }
-            else if (property.CanRead && !property.CanWrite)
+            else if (viewModelProperty.CanRead && !viewModelProperty.CanWrite)
             {
                 binding.Mode = BindingMode.OneWay;
             }
 
-            if (control is ComboBox)
-            {
-                BindingOperations.SetBinding(control, ComboBox.SelectedItemProperty, binding);
-            }
-            else if (control is TextBox)
-            {
-                binding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-                BindingOperations.SetBinding(control, TextBox.TextProperty, binding);
-            }
-        }
-
-        private void BindItemsSource(ItemsControl control, object viewModel, PropertyInfo itemsProperty)
-        {
-            var binding = new Binding()
-            {
-                Source = viewModel,
-                Path = new PropertyPath(itemsProperty.Name),
-                Mode = BindingMode.OneWay
-            };
-
-            BindingOperations.SetBinding(control, ItemsControl.ItemsSourceProperty, binding);
-        }
-
-        private void BindControlAction(Control control, object viewModel, MethodInfo method, PropertyInfo toggleProperty)
-        {
-            if (control is Button)
-            {
-                var button = (Button)control;
-                button.Click += (s, e) => method.Invoke(viewModel, null);
-
-                if (toggleProperty != null && toggleProperty.PropertyType == typeof(bool))
-                {
-                    var binding = new Binding()
-                    {
-                        Source = viewModel,
-                        Path = new PropertyPath(toggleProperty.Name),
-                        Mode = BindingMode.OneWay
-                    };
-
-                    BindingOperations.SetBinding(control, Button.IsEnabledProperty, binding);
-                }
-            }
+            BindingOperations.SetBinding(control, controlProperty, binding);
         }
     }
 }

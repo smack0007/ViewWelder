@@ -11,22 +11,22 @@ namespace ViewWelder
         private IViewBinder viewBinder;
 
         public ViewResolver(
-            Assembly viewAssembly = null,
-            ViewResolverInflector viewInflector = null,
-            IViewBinder viewBinder = null)
+            Assembly assembly = null,
+            ViewResolverInflector inflector = null,
+            IViewBinder binder = null)
         {
-            if (viewAssembly == null)
-                viewAssembly = Assembly.GetEntryAssembly();
+            if (assembly == null)
+                assembly = Assembly.GetEntryAssembly();
 
-            if (viewInflector == null)
-                viewInflector = new ViewResolverInflector();
+            if (inflector == null)
+                inflector = new ViewResolverInflector();
 
-            if (viewBinder == null)
-                viewBinder = new ViewBinder();
+            if (binder == null)
+                binder = new ViewBinder();
 
-            this.viewAssembly = viewAssembly;
-            this.viewInflector = viewInflector;
-            this.viewBinder = viewBinder;
+            this.viewAssembly = assembly;
+            this.viewInflector = inflector;
+            this.viewBinder = binder;
         }
 
         public FrameworkElement Resolve(ViewModelBase viewModel)

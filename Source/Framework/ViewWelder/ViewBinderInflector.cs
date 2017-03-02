@@ -1,21 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ViewWelder
 {
     public class ViewBinderInflector
     {
-        public virtual string InflectItemsSourceName(string name)
+        public virtual string InflectClickMethodName(string name)
+        {
+            return name;
+        }
+
+        public virtual string InflectItemsSourcePropertyName(string name)
         {
             return name + "ItemsSource";
         }
 
-        public virtual string InflectIsEnabledName(string name)
+        public virtual string InflectIsEnabledPropertyName(string name)
         {
             return name + "IsEnabled";
+        }
+
+        public virtual string InflectSelectedItemPropertyName(string name)
+        {
+            return name;
+        }
+
+        public virtual string InflectTextPropertyName(string name)
+        {
+            return name;
         }
     }
 }
