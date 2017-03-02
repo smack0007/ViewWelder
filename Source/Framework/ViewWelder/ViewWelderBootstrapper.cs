@@ -14,6 +14,11 @@ namespace ViewWelder
             this.SubscribeApplicationEvents();
         }
 
+        protected virtual ViewResolver CreateViewResolver()
+        {
+            return new ViewResolver();
+        }
+
         protected abstract ViewModelBase CreateRootViewModel();
 
         private void SubscribeApplicationEvents()

@@ -10,6 +10,6 @@ namespace HelloWorld
 {
     public class HelloWorldBootstrapper : ViewWelderBootstrapper
     {
-        protected override ViewModelBase CreateRootViewModel() => new ShellViewModel();
+        protected override ViewModelBase CreateRootViewModel() => new HelloWorldViewModel();
     }
 }

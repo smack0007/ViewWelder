@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Media;
 
 namespace ViewWelder
 {
@@ -24,6 +19,7 @@ namespace ViewWelder
             viewFrameworkElement.DataContext = viewModel;
 
             var properties = viewModel.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            var methods = viewModel.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public);
             var controlFields = view.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public).Where(x => typeof(Control).IsAssignableFrom(x.FieldType));
 
             foreach (var property in properties)
@@ -46,6 +42,20 @@ namespace ViewWelder
                         BindControlItemsSource((ItemsControl)control, viewModel, itemsProperty);
                     }
                 }
+            }
+
+            foreach (var method in methods)
+            {
+                var controlField = controlFields.SingleOrDefault(x => x.Name == method.Name);
+
+                if (controlField == null)
+                    continue;
+
+                var control = (Control)controlField.GetValue(view);
+
+                var toggleProperty = properties.SingleOrDefault(x => x.Name == "Can" + method.Name);
+
+                BindControlAction(control, viewModel, method, toggleProperty);                
             }
         }
 
@@ -87,6 +97,27 @@ namespace ViewWelder
             };
 
             BindingOperations.SetBinding(control, ItemsControl.ItemsSourceProperty, binding);
+        }
+
+        private void BindControlAction(Control control, object viewModel, MethodInfo method, PropertyInfo toggleProperty)
+        {
+            if (control is Button)
+            {
+                var button = (Button)control;
+                button.Click += (s, e) => method.Invoke(viewModel, null);
+
+                if (toggleProperty != null && toggleProperty.PropertyType == typeof(bool))
+                {
+                    var binding = new Binding()
+                    {
+                        Source = viewModel,
+                        Path = new PropertyPath(toggleProperty.Name),
+                        Mode = BindingMode.OneWay
+                    };
+
+                    BindingOperations.SetBinding(control, Button.IsEnabledProperty, binding);
+                }
+            }
         }
     }
 }
