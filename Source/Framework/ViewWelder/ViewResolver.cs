@@ -1,43 +1,39 @@
 ﻿using System;
 using System.Reflection;
+using System.Windows;
 
 namespace ViewWelder
 {
     public class ViewResolver
     {
         private Assembly viewAssembly;
-        private Func<string, string> inflectViewName;
-        private ViewBinder viewBinder;
+        private ViewResolverInflector viewInflector;
+        private IViewBinder viewBinder;
 
         public ViewResolver(
             Assembly viewAssembly = null,
-            Func<string, string> inflectViewName = null,
-            ViewBinder viewBinder = null)
+            ViewResolverInflector viewInflector = null,
+            IViewBinder viewBinder = null)
         {
             if (viewAssembly == null)
                 viewAssembly = Assembly.GetEntryAssembly();
 
-            if (inflectViewName == null)
-                inflectViewName = DefaultInflectViewName;
+            if (viewInflector == null)
+                viewInflector = new ViewResolverInflector();
 
             if (viewBinder == null)
                 viewBinder = new ViewBinder();
 
             this.viewAssembly = viewAssembly;
-            this.inflectViewName = inflectViewName;
+            this.viewInflector = viewInflector;
             this.viewBinder = viewBinder;
         }
 
-        private static string DefaultInflectViewName(string viewModelName)
-        {
-            return viewModelName.Replace("ViewModel", "View");
-        }
-
-        public object Resolve(ViewModelBase viewModel)
+        public FrameworkElement Resolve(ViewModelBase viewModel)
         {
             var viewModelName = viewModel.GetType().FullName;
 
-            var viewName = this.inflectViewName(viewModelName);
+            var viewName = this.viewInflector.InflectViewName(viewModelName);
 
             var viewType = this.viewAssembly.GetType(viewName);
 
@@ -46,12 +42,18 @@ namespace ViewWelder
 
             object view = Activator.CreateInstance(viewType);
 
-            this.viewBinder.Bind(viewModel, view);
+            if (!(view is FrameworkElement))
+                throw new ViewResolverException($"Resolved view \"{viewName}\" for ViewModel \"{viewModelName}\" is not an instance of FrameworkElement.");
 
-            return view;
+            var frameworkElement = (FrameworkElement)view;
+
+            this.viewBinder.Bind(viewModel, frameworkElement);
+
+            return frameworkElement;
         }
 
         public TView Resolve<TView>(ViewModelBase viewModel)
+            where TView : FrameworkElement
         {
             return (TView)this.Resolve(viewModel);
         }
@@ -64,6 +66,7 @@ namespace ViewWelder
 
         public TView Resolve<TViewModel, TView>()
             where TViewModel : ViewModelBase, new()
+            where TView : FrameworkElement
         {
             return (TView)this.Resolve(new TViewModel());
         }

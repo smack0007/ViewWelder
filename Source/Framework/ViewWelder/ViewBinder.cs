@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -6,21 +7,37 @@ using System.Windows.Data;
 
 namespace ViewWelder
 {
-    public class ViewBinder
+    public class ViewBinder : IViewBinder
     {
-        public void Bind(object viewModel, object view)
+        private readonly ViewBinderInflector inflector;
+
+        public ViewBinder(ViewBinderInflector inflector = null)
         {
-            if (!(view is FrameworkElement))
-            {
-                throw new ViewBinderException("View must be an instance of DependencyObject.");
-            }
+            if (inflector == null)
+                inflector = new ViewBinderInflector();
 
-            var viewFrameworkElement = (FrameworkElement)view;
-            viewFrameworkElement.DataContext = viewModel;
+            this.inflector = inflector;
+        }
 
-            var properties = viewModel.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
-            var methods = viewModel.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public);
-            var controlFields = view.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public).Where(x => typeof(Control).IsAssignableFrom(x.FieldType));
+        public void Bind(ViewModelBase viewModel, FrameworkElement view)
+        {
+            if (viewModel == null)
+                throw new ArgumentNullException(nameof(viewModel));
+
+            if (view == null)
+                throw new ArgumentNullException(nameof(view));
+
+            view.DataContext = viewModel;
+
+            var properties = viewModel.GetType()
+                .GetProperties(BindingFlags.Instance | BindingFlags.Public);
+
+            var methods = viewModel.GetType()
+                .GetMethods(BindingFlags.Instance | BindingFlags.Public);
+
+            var controlFields = view.GetType()
+                .GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+                .Where(x => typeof(Control).IsAssignableFrom(x.FieldType));
 
             foreach (var property in properties)
             {
@@ -35,11 +52,11 @@ namespace ViewWelder
 
                 if (control is ItemsControl)
                 {
-                    var itemsProperty = properties.SingleOrDefault(x => x.Name == property.Name + "Items");
+                    var itemsSourceProperty = properties.SingleOrDefault(x => x.Name == this.inflector.InflectItemsSourceName(control.Name));
 
-                    if (itemsProperty != null)
+                    if (itemsSourceProperty != null)
                     {
-                        BindControlItemsSource((ItemsControl)control, viewModel, itemsProperty);
+                        BindItemsSource((ItemsControl)control, viewModel, itemsSourceProperty);
                     }
                 }
             }
@@ -53,9 +70,9 @@ namespace ViewWelder
 
                 var control = (Control)controlField.GetValue(view);
 
-                var toggleProperty = properties.SingleOrDefault(x => x.Name == "Can" + method.Name);
+                var isEnabledProperty = properties.SingleOrDefault(x => x.Name == this.inflector.InflectIsEnabledName(control.Name));
 
-                BindControlAction(control, viewModel, method, toggleProperty);                
+                BindControlAction(control, viewModel, method, isEnabledProperty);                
             }
         }
 
@@ -87,7 +104,7 @@ namespace ViewWelder
             }
         }
 
-        private void BindControlItemsSource(ItemsControl control, object viewModel, PropertyInfo itemsProperty)
+        private void BindItemsSource(ItemsControl control, object viewModel, PropertyInfo itemsProperty)
         {
             var binding = new Binding()
             {

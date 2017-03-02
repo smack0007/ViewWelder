@@ -22,7 +22,7 @@ namespace HelloWorld.ViewModels
                 {
                     this.name = value;
                     this.NotifyOfPropertyChange(nameof(this.Name));
-                    this.NotifyOfPropertyChange(nameof(this.CanSayHello));
+                    this.NotifyOfPropertyChange(nameof(this.SayHelloIsEnabled));
                 }
             }
         }
@@ -39,7 +39,7 @@ namespace HelloWorld.ViewModels
                 {
                     this.username = value;
                     this.NotifyOfPropertyChange(nameof(this.Username));
-                    this.NotifyOfPropertyChange(nameof(this.CanSayHello));
+                    this.NotifyOfPropertyChange(nameof(this.SayHelloIsEnabled));
                 }
             }
         }
@@ -60,15 +60,15 @@ namespace HelloWorld.ViewModels
             }
         }
 
-        public IEnumerable<string> UserTypeItems { get; } = new string[] { "Administrator", "Power User", "User" };
+        public IEnumerable<string> UserTypeItemsSource { get; } = new string[] { "Administrator", "Power User", "User" };
 
         public HelloWorldViewModel()
         {
-            this.UserType = this.UserTypeItems.First();
+            this.UserType = this.UserTypeItemsSource.First();
         }
 
-        public bool CanSayHello => !string.IsNullOrEmpty(this.Name) &&
-                                   !string.IsNullOrEmpty(this.Username);
+        public bool SayHelloIsEnabled => !string.IsNullOrEmpty(this.Name) &&
+                                         !string.IsNullOrEmpty(this.Username);
 
         public void SayHello()
         {
