@@ -39,6 +39,11 @@ namespace ViewWelder
             var methods = viewModel.GetType()
                 .GetMethods(BindingFlags.Instance | BindingFlags.Public);
 
+            if (view is Window)
+            {
+                BindWindow((Window)view, viewModel, properties);
+            }
+
             var controls = view.GetType()
                 .GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
                 .Where(x => typeof(Control).IsAssignableFrom(x.FieldType))
@@ -62,6 +67,24 @@ namespace ViewWelder
                 {
                     BindTextBox((TextBox)control, viewModel, properties);
                 }
+            }
+        }
+
+        private void BindWindow(Window control, ViewModelBase viewModel, PropertyInfo[] properties)
+        {
+            var titlePropertyName = this.inflector.InflectWindowTitlePropertyName();
+            var titleProperty = properties.SingleOrDefault(x => x.Name == titlePropertyName);
+
+            if (titleProperty != null)
+            {
+                var binding = new Binding()
+                {
+                    Source = viewModel,
+                    Path = new PropertyPath(titleProperty.Name),
+                    Mode = BindingMode.OneWay
+                };
+
+                BindingOperations.SetBinding(control, Window.TitleProperty, binding);
             }
         }
 

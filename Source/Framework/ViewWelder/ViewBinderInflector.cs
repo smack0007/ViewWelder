@@ -28,5 +28,10 @@ namespace ViewWelder
         {
             return name;
         }
+
+        public virtual string InflectWindowTitlePropertyName()
+        {
+            return "Title";
+        }
     }
 }
