@@ -4,7 +4,7 @@ using System.Windows;
 
 namespace ViewWelder
 {
-    public class ViewResolver
+    public class ViewResolver : IViewResolver
     {
         private Assembly viewAssembly;
         private ViewResolverInflector viewInflector;
@@ -47,28 +47,9 @@ namespace ViewWelder
 
             var frameworkElement = (FrameworkElement)view;
 
-            this.viewBinder.Bind(viewModel, frameworkElement);
+            this.viewBinder.Bind(viewModel, frameworkElement, this);
 
             return frameworkElement;
-        }
-
-        public TView Resolve<TView>(ViewModelBase viewModel)
-            where TView : FrameworkElement
-        {
-            return (TView)this.Resolve(viewModel);
-        }
-
-        public object Resolve<TViewModel>()
-            where TViewModel : ViewModelBase, new()
-        {
-            return this.Resolve(new TViewModel());
-        }
-
-        public TView Resolve<TViewModel, TView>()
-            where TViewModel : ViewModelBase, new()
-            where TView : FrameworkElement
-        {
-            return (TView)this.Resolve(new TViewModel());
         }
     }
 }

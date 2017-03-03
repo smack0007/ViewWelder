@@ -9,6 +9,11 @@ namespace ViewWelder
             return name;
         }
 
+        public virtual string InflectContentPropertyName(string name)
+        {
+            return name;
+        }
+
         public virtual string InflectItemsSourcePropertyName(string name)
         {
             return name + "ItemsSource";
@@ -17,11 +22,6 @@ namespace ViewWelder
         public virtual string InflectIsEnabledPropertyName(string name)
         {
             return name + "IsEnabled";
-        }
-
-        public virtual string InflectSelectedItemPropertyName(string name)
-        {
-            return name;
         }
 
         public virtual string InflectTextPropertyName(string name)

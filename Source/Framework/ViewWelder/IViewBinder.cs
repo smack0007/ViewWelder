@@ -4,6 +4,6 @@ namespace ViewWelder
 {
     public interface IViewBinder
     {
-        void Bind(ViewModelBase viewModel, FrameworkElement view);
+        void Bind(ViewModelBase viewModel, FrameworkElement view, IViewResolver viewResolver);
     }
 }

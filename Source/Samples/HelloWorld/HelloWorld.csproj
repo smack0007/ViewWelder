@@ -60,7 +60,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="HelloWorldBootstrapper.cs" />
+    <Compile Include="ViewModels\GreeterViewModel.cs" />
     <Compile Include="ViewModels\HelloWorldViewModel.cs" />
+    <Compile Include="Views\GreeterView.xaml.cs">
+      <DependentUpon>GreeterView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\HelloWorldView.xaml.cs">
       <DependentUpon>HelloWorldView.xaml</DependentUpon>
     </Compile>
@@ -99,6 +103,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Views\GreeterView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\HelloWorldView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
