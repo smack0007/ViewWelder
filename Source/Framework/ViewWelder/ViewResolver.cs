@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Windows;
 
@@ -44,6 +45,11 @@ namespace ViewWelder
 
             if (!(view is FrameworkElement))
                 throw new ViewResolverException($"Resolved view \"{viewName}\" for ViewModel \"{viewModelName}\" is not an instance of FrameworkElement.");
+
+            var initializeComponentMethod = view.GetType().GetMethods().SingleOrDefault(x => x.Name == "InitializeComponent" && !x.GetParameters().Any());
+
+            if (initializeComponentMethod != null)
+                initializeComponentMethod.Invoke(view, null);
 
             var frameworkElement = (FrameworkElement)view;
 

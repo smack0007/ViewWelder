@@ -62,12 +62,6 @@
     <Compile Include="HelloWorldBootstrapper.cs" />
     <Compile Include="ViewModels\GreeterViewModel.cs" />
     <Compile Include="ViewModels\HelloWorldViewModel.cs" />
-    <Compile Include="Views\GreeterView.xaml.cs">
-      <DependentUpon>GreeterView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\HelloWorldView.xaml.cs">
-      <DependentUpon>HelloWorldView.xaml</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
