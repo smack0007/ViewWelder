@@ -4,34 +4,34 @@ namespace ViewWelder
 {
     public class ViewBinderInflector
     {
-        public virtual string InflectClickMethodName(string name)
+        public virtual string InflectClickMethodName(Type controlType, string controlName)
         {
-            return name;
+            return controlName;
         }
 
-        public virtual string InflectContentPropertyName(string name)
+        public virtual string InflectContentPropertyName(Type controlType, string controlName)
         {
-            return name;
+            return controlName;
         }
 
-        public virtual string InflectItemsSourcePropertyName(string name)
+        public virtual string InflectItemsSourcePropertyName(Type controlType, string controlName)
         {
-            return name + "ItemsSource";
+            return controlName + "ItemsSource";
         }
 
-        public virtual string InflectIsEnabledPropertyName(string name)
+        public virtual string InflectIsEnabledPropertyName(Type controlType, string controlName)
         {
-            return name + "IsEnabled";
+            return controlName + "IsEnabled";
         }
 
-        public virtual string InflectTextPropertyName(string name)
+        public virtual string InflectTextPropertyName(Type controlType, string controlName)
         {
-            return name;
+            return controlName;
         }
 
-        public virtual string InflectWindowTitlePropertyName()
+        public virtual string InflectTitlePropertyName(Type controlType, string controlName)
         {
-            return "Title";
+            return controlName + "Title";
         }
     }
 }

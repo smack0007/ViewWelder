@@ -1,12 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using ViewWelder;
+using ViewWelder.ViewModels;
 
 namespace HelloWorld.ViewModels
 {
-    public class GreeterViewModel : ViewModelBase
+    public class GreeterViewModel : HeaderedItemViewModel<string>
     {
+        public GreeterViewModel()
+        {
+            this.Header = "Greeter";
+            this.UserType = this.UserTypeItemsSource.First();
+        }
+
         private string name = "Bob Freeman";
 
         public string Name
@@ -59,10 +65,6 @@ namespace HelloWorld.ViewModels
 
         public IEnumerable<string> UserTypeItemsSource { get; } = new string[] { "Administrator", "Power User", "User" };
 
-        public GreeterViewModel()
-        {
-            this.UserType = this.UserTypeItemsSource.First();
-        }
 
         public bool SayHelloIsEnabled => !string.IsNullOrEmpty(this.Name) &&
                                          !string.IsNullOrEmpty(this.Username);

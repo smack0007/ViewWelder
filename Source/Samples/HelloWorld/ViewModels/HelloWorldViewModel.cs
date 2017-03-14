@@ -1,5 +1,6 @@
-﻿using System.ComponentModel;
-using ViewWelder;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
+using ViewWelder.ViewModels;
 
 namespace HelloWorld.ViewModels
 {
@@ -7,10 +8,17 @@ namespace HelloWorld.ViewModels
     {
         public string Title => $"Hello {this.Greeter.Name}";
 
+        public ObservableCollection<HeaderedItemViewModel<string>> TabsItemsSource { get; } = new ObservableCollection<HeaderedItemViewModel<string>>();
+
         public GreeterViewModel Greeter { get; } = new GreeterViewModel();
+
+        public ListViewModel List { get; } = new ListViewModel();
 
         public HelloWorldViewModel()
         {
+            this.TabsItemsSource.Add(this.Greeter);
+            this.TabsItemsSource.Add(this.List);
+
             this.Greeter.PropertyChanged += this.Greeter_PropertyChanged;
         }
 

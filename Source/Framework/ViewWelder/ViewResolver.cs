@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Windows;
+using ViewWelder.ViewModels;
 
 namespace ViewWelder
 {
@@ -44,7 +45,7 @@ namespace ViewWelder
             object view = Activator.CreateInstance(viewType);
 
             if (!(view is FrameworkElement))
-                throw new ViewResolverException($"Resolved view \"{viewName}\" for ViewModel \"{viewModelName}\" is not an instance of FrameworkElement.");
+                throw new ViewResolverException($"Resolved view \"{viewName}\" for ViewModel \"{viewModelName}\" is not an instance of {nameof(FrameworkElement)}.");
 
             var initializeComponentMethod = view.GetType().GetMethods().SingleOrDefault(x => x.Name == "InitializeComponent" && !x.GetParameters().Any());
 

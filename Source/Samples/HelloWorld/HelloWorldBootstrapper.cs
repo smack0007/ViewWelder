@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HelloWorld.ViewModels;
+﻿using HelloWorld.ViewModels;
 using ViewWelder;
+using ViewWelder.ViewModels;
 
 namespace HelloWorld
 {

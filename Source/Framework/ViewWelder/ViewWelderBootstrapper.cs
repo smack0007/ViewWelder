@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
+using ViewWelder.ViewModels;
 
 namespace ViewWelder
 {
@@ -35,6 +32,7 @@ namespace ViewWelder
             Window window = null;
 
             var viewResolver = new ViewResolver();
+            Application.Current.Resources["viewResolver"] = viewResolver;
 
             try
             {

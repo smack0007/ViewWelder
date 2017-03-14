@@ -5,6 +5,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using ViewWelder.Converters;
+using ViewWelder.DataTemplates;
+using ViewWelder.ViewModels;
 
 namespace ViewWelder
 {
@@ -22,16 +24,13 @@ namespace ViewWelder
 
         public void Bind(ViewModelBase viewModel, FrameworkElement view, IViewResolver viewResolver)
         {
-            if (viewModel == null)
-                throw new ArgumentNullException(nameof(viewModel));
-
             if (view == null)
                 throw new ArgumentNullException(nameof(view));
 
             if (viewResolver == null)
                 throw new ArgumentNullException(nameof(viewResolver));
 
-            view.DataContext = viewModel;
+            view.DataContext = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
 
             var properties = viewModel.GetType()
                 .GetProperties(BindingFlags.Instance | BindingFlags.Public);
@@ -55,13 +54,24 @@ namespace ViewWelder
                 {
                     BindButton((Button)control, viewModel, properties, methods);
                 }
-                else if (control is ComboBox)
-                {
-                    BindComboBox((ComboBox)control, viewModel, properties);
-                }
                 else if (control is ContentControl)
                 {
                     BindContentControl((ContentControl)control, viewModel, properties, viewResolver);
+                }
+                else if (control is ItemsControl)
+                {
+                    if (control is ComboBox)
+                    {
+                        BindComboBox((ComboBox)control, viewModel, properties);
+                    }
+                    else if (control is TabControl)
+                    {
+                        BindTabControl((TabControl)control, viewModel, properties, methods, viewResolver);
+                    }
+                    else
+                    {
+                        BindItemsControl((ItemsControl)control, viewModel, properties);
+                    }
                 }
                 else if (control is TextBox)
                 {
@@ -72,7 +82,7 @@ namespace ViewWelder
 
         private void BindWindow(Window control, ViewModelBase viewModel, PropertyInfo[] properties)
         {
-            var titlePropertyName = this.inflector.InflectWindowTitlePropertyName();
+            var titlePropertyName = this.inflector.InflectTitlePropertyName(control.GetType(), control.Name);
             var titleProperty = properties.SingleOrDefault(x => x.Name == titlePropertyName);
 
             if (titleProperty != null)
@@ -90,7 +100,7 @@ namespace ViewWelder
 
         private void BindButton(Button control, ViewModelBase viewModel, PropertyInfo[] properties, MethodInfo[] methods)
         {
-            var clickMethodName = this.inflector.InflectClickMethodName(control.Name);
+            var clickMethodName = this.inflector.InflectClickMethodName(control.GetType(), control.Name);
             var clickMethod = methods.SingleOrDefault(x => x.Name == clickMethodName);
 
             if (clickMethod != null && clickMethod.GetParameters().Count() == 0)
@@ -98,7 +108,7 @@ namespace ViewWelder
                 control.Click += (s, e) => clickMethod.Invoke(viewModel, null);
             }
 
-            var isEnabledPropertyName = this.inflector.InflectIsEnabledPropertyName(control.Name);
+            var isEnabledPropertyName = this.inflector.InflectIsEnabledPropertyName(control.GetType(), control.Name);
             var isEnabledProperty = properties.SingleOrDefault(x => x.Name == isEnabledPropertyName);
 
             if (isEnabledProperty != null && isEnabledProperty.PropertyType == typeof(bool))
@@ -118,7 +128,7 @@ namespace ViewWelder
         {
             BindItemsControl(control, viewModel, properties);
 
-            var selectedItemPropertyName = this.inflector.InflectContentPropertyName(control.Name);
+            var selectedItemPropertyName = this.inflector.InflectContentPropertyName(control.GetType(), control.Name);
             var selectedItemProperty = properties.SingleOrDefault(x => x.Name == selectedItemPropertyName);
 
             if (selectedItemProperty != null)
@@ -129,7 +139,7 @@ namespace ViewWelder
 
         private void BindContentControl(ContentControl control, ViewModelBase viewModel, PropertyInfo[] properties, IViewResolver viewResolver)
         {
-            var contentPropertyName = this.inflector.InflectContentPropertyName(control.Name);
+            var contentPropertyName = this.inflector.InflectContentPropertyName(control.GetType(), control.Name);
             var contentProperty = properties.SingleOrDefault(x => x.Name == contentPropertyName);
 
             if (contentProperty != null && typeof(ViewModelBase).IsAssignableFrom(contentProperty.PropertyType))
@@ -139,7 +149,7 @@ namespace ViewWelder
                     Source = viewModel,
                     Path = new PropertyPath(contentProperty.Name),
                     Mode = BindingMode.OneWay,
-                    Converter = new ViewModelToViewConverter(viewResolver)
+                    Converter = new ViewResolverConverter(viewResolver)
                 };
 
                 BindingOperations.SetBinding(control, ContentControl.ContentProperty, binding);
@@ -148,7 +158,7 @@ namespace ViewWelder
 
         private void BindItemsControl(ItemsControl control, ViewModelBase viewModel, PropertyInfo[] properties)
         {
-            var itemsSourcePropertyName = this.inflector.InflectItemsSourcePropertyName(control.Name);
+            var itemsSourcePropertyName = this.inflector.InflectItemsSourcePropertyName(control.GetType(), control.Name);
             var itemsSourceProperty = properties.SingleOrDefault(x => x.Name == itemsSourcePropertyName);
 
             if (itemsSourceProperty != null)
@@ -164,9 +174,23 @@ namespace ViewWelder
             }
         }
 
+        private void BindTabControl(TabControl control, ViewModelBase viewModel, PropertyInfo[] properties, MethodInfo[] methods, IViewResolver viewResolver)
+        {
+            BindItemsControl(control, viewModel, properties);
+
+            var itemsSourcePropertyName = this.inflector.InflectItemsSourcePropertyName(control.GetType(), control.Name);
+            var itemsSourceProperty = properties.SingleOrDefault(x => x.Name == itemsSourcePropertyName);
+
+            if (itemsSourceProperty != null)
+            {
+                if (control.ContentTemplate == null)
+                    control.ContentTemplate = new ViewResolverDataTemplate();
+            }
+        }
+
         private void BindTextBox(TextBox control, ViewModelBase viewModel, PropertyInfo[] properties)
         {
-            var textPropertyName = this.inflector.InflectTextPropertyName(control.Name);
+            var textPropertyName = this.inflector.InflectTextPropertyName(control.GetType(), control.Name);
             var textProperty = properties.SingleOrDefault(x => x.Name == textPropertyName);
 
             if (textProperty != null && textProperty.PropertyType == typeof(string))

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace ViewWelder
+namespace ViewWelder.ViewModels
 {
     public abstract class ViewModelBase : INotifyPropertyChanged
     {

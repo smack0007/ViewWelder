@@ -1,2 +1,2 @@
 - Abstraction for Dialogs.
-- Allow inflection for names in ViewBinder.
+- ViewModelToViewConverter as singleton?
