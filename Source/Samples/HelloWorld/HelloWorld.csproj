@@ -56,8 +56,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="HelloWorldBootstrapper.cs" />
+    <Compile Include="ViewModels\GreeterHeaderViewModel.cs" />
     <Compile Include="ViewModels\GreeterViewModel.cs" />
     <Compile Include="ViewModels\HelloWorldViewModel.cs" />
+    <Compile Include="ViewModels\ListHeaderViewModel.cs" />
     <Compile Include="ViewModels\ListViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -94,11 +96,19 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Views\GreeterHeaderView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\GreeterView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\HelloWorldView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ListHeaderView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

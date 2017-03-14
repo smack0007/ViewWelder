@@ -22,6 +22,10 @@ namespace ViewWelder
             this.inflector = inflector;
         }
 
+        private static PropertyInfo[] GetProperties(Type type) => type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+
+        private static MethodInfo[] GetMethods(Type type) => type.GetMethods(BindingFlags.Instance | BindingFlags.Public);
+
         public void Bind(ViewModelBase viewModel, FrameworkElement view, IViewResolver viewResolver)
         {
             if (view == null)
@@ -32,11 +36,9 @@ namespace ViewWelder
 
             view.DataContext = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
 
-            var properties = viewModel.GetType()
-                .GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            var properties = GetProperties(viewModel.GetType());
 
-            var methods = viewModel.GetType()
-                .GetMethods(BindingFlags.Instance | BindingFlags.Public);
+            var methods = GetMethods(viewModel.GetType());
 
             if (view is Window)
             {
@@ -77,24 +79,6 @@ namespace ViewWelder
                 {
                     BindTextBox((TextBox)control, viewModel, properties);
                 }
-            }
-        }
-
-        private void BindWindow(Window control, ViewModelBase viewModel, PropertyInfo[] properties)
-        {
-            var titlePropertyName = this.inflector.InflectTitlePropertyName(control.GetType(), control.Name);
-            var titleProperty = properties.SingleOrDefault(x => x.Name == titlePropertyName);
-
-            if (titleProperty != null)
-            {
-                var binding = new Binding()
-                {
-                    Source = viewModel,
-                    Path = new PropertyPath(titleProperty.Name),
-                    Mode = BindingMode.OneWay
-                };
-
-                BindingOperations.SetBinding(control, Window.TitleProperty, binding);
             }
         }
 
@@ -181,10 +165,27 @@ namespace ViewWelder
             var itemsSourcePropertyName = this.inflector.InflectItemsSourcePropertyName(control.GetType(), control.Name);
             var itemsSourceProperty = properties.SingleOrDefault(x => x.Name == itemsSourcePropertyName);
 
-            if (itemsSourceProperty != null)
+            if (itemsSourceProperty != null && itemsSourceProperty.PropertyType.IsCollection())
             {
                 if (control.ContentTemplate == null)
                     control.ContentTemplate = new ViewResolverDataTemplate();
+
+                var elementType = itemsSourceProperty.PropertyType.GetCollectionElementType();
+
+                var headerPropertyName = this.inflector.InflectHeaderPropertyName(typeof(TabItem), string.Empty);
+                var headerProperty = GetProperties(elementType).SingleOrDefault(x => x.Name == headerPropertyName);
+
+                if (headerProperty != null)
+                {
+                    if (headerProperty.PropertyType.IsViewModel())
+                    {
+                        control.ItemTemplate = new ViewResolverDataTemplate(headerPropertyName);
+                    }
+                    else
+                    {
+                        control.ItemTemplate = new TextBlockDataTemplate(headerPropertyName);
+                    }
+                }
             }
         }
 
@@ -196,6 +197,24 @@ namespace ViewWelder
             if (textProperty != null && textProperty.PropertyType == typeof(string))
             {
                 BindValueProperty(control, TextBox.TextProperty, viewModel, textProperty, UpdateSourceTrigger.PropertyChanged);
+            }
+        }
+
+        private void BindWindow(Window control, ViewModelBase viewModel, PropertyInfo[] properties)
+        {
+            var titlePropertyName = this.inflector.InflectTitlePropertyName(control.GetType(), control.Name);
+            var titleProperty = properties.SingleOrDefault(x => x.Name == titlePropertyName);
+
+            if (titleProperty != null)
+            {
+                var binding = new Binding()
+                {
+                    Source = viewModel,
+                    Path = new PropertyPath(titleProperty.Name),
+                    Mode = BindingMode.OneWay
+                };
+
+                BindingOperations.SetBinding(control, Window.TitleProperty, binding);
             }
         }
 

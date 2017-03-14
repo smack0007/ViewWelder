@@ -14,6 +14,11 @@ namespace ViewWelder
             return controlName;
         }
 
+        public virtual string InflectHeaderPropertyName(Type controlType, string controlName)
+        {
+            return controlName + "Header";
+        }
+
         public virtual string InflectItemsSourcePropertyName(Type controlType, string controlName)
         {
             return controlName + "ItemsSource";

@@ -1,14 +1,7 @@
-﻿using System;
-using System.Reflection;
-
-namespace ViewWelder.ViewModels
+﻿namespace ViewWelder.ViewModels
 {
-    public abstract class HeaderedItemViewModel : ViewModelBase
-    {
-    }
-
-    public abstract class HeaderedItemViewModel<THeader> : HeaderedItemViewModel
-        where THeader: class
+    public abstract class HeaderedItemViewModel<THeader> : ViewModelBase, IHeaderedItemViewModel<THeader>
+        where THeader : ViewModelBase
     {
         private THeader header;
 
@@ -29,11 +22,6 @@ namespace ViewWelder.ViewModels
         protected virtual void OnHeaderChanged()
         {
             this.NotifyOfPropertyChange(nameof(Header));
-        }
-
-        public override string ToString()
-        {
-            return this.header.ToString();
         }
     }
 }

@@ -2,11 +2,11 @@
 
 namespace HelloWorld.ViewModels
 {
-    public class ListViewModel : HeaderedItemViewModel<string>
+    public class ListViewModel : HeaderedItemViewModel<ListHeaderViewModel>
     {
         public ListViewModel()
         {
-            this.Header = "List";
+            this.Header = new ListHeaderViewModel();
         }
     }
 }

@@ -5,11 +5,11 @@ using ViewWelder.ViewModels;
 
 namespace HelloWorld.ViewModels
 {
-    public class GreeterViewModel : HeaderedItemViewModel<string>
+    public class GreeterViewModel : HeaderedItemViewModel<GreeterHeaderViewModel>
     {
         public GreeterViewModel()
         {
-            this.Header = "Greeter";
+            this.Header = new GreeterHeaderViewModel();
             this.UserType = this.UserTypeItemsSource.First();
         }
 

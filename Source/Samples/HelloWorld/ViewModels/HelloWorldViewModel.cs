@@ -8,7 +8,7 @@ namespace HelloWorld.ViewModels
     {
         public string Title => $"Hello {this.Greeter.Name}";
 
-        public ObservableCollection<HeaderedItemViewModel<string>> TabsItemsSource { get; } = new ObservableCollection<HeaderedItemViewModel<string>>();
+        public ObservableCollection<IHeaderedItemViewModel<ViewModelBase>> TabsItemsSource { get; } = new ObservableCollection<IHeaderedItemViewModel<ViewModelBase>>();
 
         public GreeterViewModel Greeter { get; } = new GreeterViewModel();
 
