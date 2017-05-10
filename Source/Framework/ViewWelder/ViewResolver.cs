@@ -2,20 +2,17 @@
 using System.Linq;
 using System.Reflection;
 using System.Windows;
-using ViewWelder.ViewModels;
 
 namespace ViewWelder
 {
     public class ViewResolver : IViewResolver
     {
-        private Assembly viewAssembly;
-        private ViewResolverInflector viewInflector;
-        private IViewBinder viewBinder;
+        private Assembly assembly;
+        private IViewResolverInflector inflector;
 
         public ViewResolver(
             Assembly assembly = null,
-            ViewResolverInflector inflector = null,
-            IViewBinder binder = null)
+            IViewResolverInflector inflector = null)
         {
             if (assembly == null)
                 assembly = Assembly.GetEntryAssembly();
@@ -23,21 +20,17 @@ namespace ViewWelder
             if (inflector == null)
                 inflector = new ViewResolverInflector();
 
-            if (binder == null)
-                binder = new ViewBinder();
-
-            this.viewAssembly = assembly;
-            this.viewInflector = inflector;
-            this.viewBinder = binder;
+            this.assembly = assembly;
+            this.inflector = inflector;
         }
 
-        public FrameworkElement Resolve(ViewModelBase viewModel)
+        public FrameworkElement Resolve(ViewModel viewModel)
         {
             var viewModelName = viewModel.GetType().FullName;
 
-            var viewName = this.viewInflector.InflectViewName(viewModelName);
+            var viewName = this.inflector.InflectViewName(viewModelName);
 
-            var viewType = this.viewAssembly.GetType(viewName);
+            var viewType = this.assembly.GetType(viewName);
 
             if (viewType == null)
                 throw new ViewResolverException($"Unable to find View \"{viewName}\" for ViewModel \"{viewModelName}\".");
@@ -54,7 +47,7 @@ namespace ViewWelder
 
             var frameworkElement = (FrameworkElement)view;
 
-            this.viewBinder.Bind(viewModel, frameworkElement, this);
+            frameworkElement.DataContext = viewModel;
 
             return frameworkElement;
         }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows;
-using ViewWelder.ViewModels;
 
 namespace ViewWelder
 {
@@ -16,7 +15,7 @@ namespace ViewWelder
             return new ViewResolver();
         }
 
-        protected abstract ViewModelBase CreateRootViewModel();
+        protected abstract ViewModel CreateRootViewModel();
 
         private void SubscribeApplicationEvents()
         {

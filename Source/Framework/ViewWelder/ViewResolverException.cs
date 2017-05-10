@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ViewWelder
+﻿namespace ViewWelder
 {
     public class ViewResolverException : ViewWelderException
     {

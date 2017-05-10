@@ -2,7 +2,6 @@
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-using ViewWelder.ViewModels;
 
 namespace ViewWelder.Converters
 {
@@ -29,12 +28,12 @@ namespace ViewWelder.Converters
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!(value is ViewModelBase))
+            if (!(value is ViewModel))
                 return null;
 
             this.EnsureViewResolver();
 
-            return this.viewResolver.Resolve((ViewModelBase)value);
+            return this.viewResolver.Resolve((ViewModel)value);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

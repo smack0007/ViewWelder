@@ -1,2 +1,2 @@
 - Abstraction for Dialogs.
-- ViewModelToViewConverter as singleton?
+- ViewResolverConverter as singleton?
