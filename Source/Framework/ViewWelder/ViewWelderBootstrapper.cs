@@ -7,20 +7,12 @@ namespace ViewWelder
     {
         protected ViewWelderBootstrapper()
         {
-            this.SubscribeApplicationEvents();
-        }
-
-        protected virtual ViewResolver CreateViewResolver()
-        {
-            return new ViewResolver();
-        }
-
-        protected abstract ViewModel CreateRootViewModel();
-
-        private void SubscribeApplicationEvents()
-        {
             Application.Current.Startup += this.Application_Startup;
         }
+        
+        protected virtual ViewResolver CreateViewResolver() => new ViewResolver();
+
+        protected abstract ViewModel CreateRootViewModel();
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
@@ -30,8 +22,8 @@ namespace ViewWelder
 
             Window window = null;
 
-            var viewResolver = new ViewResolver();
-            Application.Current.Resources["viewResolver"] = viewResolver;
+            var viewResolver = this.CreateViewResolver();
+            Application.Current.Resources[ViewWelderResourceKeys.ViewResolver] = viewResolver;
 
             try
             {

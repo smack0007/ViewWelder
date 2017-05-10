@@ -13,16 +13,11 @@ namespace ViewWelder.Converters
         {
         }
 
-        public ViewResolverConverter(IViewResolver viewResolver)
-        {
-            this.viewResolver = viewResolver ?? throw new ArgumentNullException(nameof(viewResolver));
-        }
-
         private void EnsureViewResolver()
         {
             if (this.viewResolver == null)
             {
-                this.viewResolver = (IViewResolver)Application.Current.Resources["viewResolver"];
+                this.viewResolver = (IViewResolver)Application.Current.Resources[ViewWelderResourceKeys.ViewResolver];
             }
         }
 

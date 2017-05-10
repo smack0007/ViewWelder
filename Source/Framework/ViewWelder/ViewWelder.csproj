@@ -59,6 +59,7 @@
     <Compile Include="ViewResolverInflector.cs" />
     <Compile Include="ViewWelderBootstrapper.cs" />
     <Compile Include="ViewWelderException.cs" />
+    <Compile Include="ViewWelderResourceKeys.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
