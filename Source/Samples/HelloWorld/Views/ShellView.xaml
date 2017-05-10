@@ -6,8 +6,12 @@
         xmlns:local="clr-namespace:HelloWorld.Views"
         xmlns:vw="clr-namespace:ViewWelder;assembly=ViewWelder"
         mc:Ignorable="d"
-        Title="ShellView" Height="300" Width="300">
+        Title="ShellView" Width="800" Height="600">
     <Grid>
-        <ContentControl Content="{vw:ResolveView Person}" Padding="5" />
+        <TabControl ItemsSource="{Binding People}" SelectedItem="{Binding SelectedPerson}">
+            <TabControl.ContentTemplate>
+                <vw:ResolveViewDataTemplate Path="." Mode="TwoWay" />
+            </TabControl.ContentTemplate>
+        </TabControl>
     </Grid>
 </Window>

@@ -1,14 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ViewWelder;
 
 namespace HelloWorld.ViewModels
 {
     public class ShellViewModel : ViewModel
     {
-        public PersonViewModel Person { get; } = new PersonViewModel() { FirstName = "Hannah", LastName = "Snow" };
+        private PersonViewModel selectedPerson;
+
+        public ObservableCollection<PersonViewModel> People { get; } = new ObservableCollection<PersonViewModel>()
+        {
+            new PersonViewModel() { FirstName = "Zachary", LastName = "Snow" },
+            new PersonViewModel() { FirstName = "Daniela", LastName = "Snow" },
+            new PersonViewModel() { FirstName = "Hannah", LastName = "Snow" }
+        };
+
+        public PersonViewModel SelectedPerson
+        {
+            get => this.selectedPerson;
+
+            set
+            {
+                if (value != this.selectedPerson)
+                {
+                    this.selectedPerson = value;
+                    this.NotifyOfPropertyChange(nameof(this.SelectedPerson));
+                }
+            }
+        }
+
+        public ShellViewModel()
+        {
+            this.SelectedPerson = this.People.First();
+        }
     }
 }

@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Converters\ViewResolverConverter.cs" />
     <Compile Include="IViewResolverInflector.cs" />
+    <Compile Include="ResolveViewDataTemplate.cs" />
     <Compile Include="ResolveViewExtension.cs" />
     <Compile Include="IViewResolver.cs" />
     <Compile Include="ViewResolverExtensions.cs" />

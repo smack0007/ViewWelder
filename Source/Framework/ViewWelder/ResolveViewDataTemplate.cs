@@ -1,12 +1,11 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Markup;
 using ViewWelder.Converters;
 
 namespace ViewWelder
 {
-    public class ResolveViewExtension : MarkupExtension
+    public class ResolveViewDataTemplate : DataTemplate
     {
         private readonly Binding binding;
 
@@ -22,14 +21,14 @@ namespace ViewWelder
             set => this.binding.Mode = value;
         }
 
-        public ResolveViewExtension()
+        public ResolveViewDataTemplate()
         {
             this.binding = new Binding() { Converter = new ViewResolverConverter() };
-        }
 
-        public override object ProvideValue(IServiceProvider serviceProvider)
-        {
-            return this.binding.ProvideValue(serviceProvider);
+            var ccFactory = new FrameworkElementFactory(typeof(ContentControl));
+            ccFactory.SetBinding(ContentControl.ContentProperty, binding);
+
+            this.VisualTree = ccFactory;
         }
     }
 }

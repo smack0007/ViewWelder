@@ -39,5 +39,7 @@ namespace HelloWorld.ViewModels
                 }
             }
         }
+
+        public override string ToString() => $"{this.LastName}, {this.FirstName}";
     }
 }
