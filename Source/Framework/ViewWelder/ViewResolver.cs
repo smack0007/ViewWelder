@@ -40,14 +40,17 @@ namespace ViewWelder
             if (!(view is FrameworkElement))
                 throw new ViewResolverException($"Resolved view \"{viewName}\" for ViewModel \"{viewModelName}\" is not an instance of {nameof(FrameworkElement)}.");
 
-            var initializeComponentMethod = view.GetType().GetMethods().SingleOrDefault(x => x.Name == "InitializeComponent" && !x.GetParameters().Any());
+            var frameworkElement = (FrameworkElement)view;
+
+            var initializeComponentMethod = frameworkElement.GetType().GetMethods().SingleOrDefault(x => x.Name == "InitializeComponent" && !x.GetParameters().Any());
 
             if (initializeComponentMethod != null)
                 initializeComponentMethod.Invoke(view, null);
 
-            var frameworkElement = (FrameworkElement)view;
-
             frameworkElement.DataContext = viewModel;
+
+            if (viewModel is IViewAware)
+                ((IViewAware)viewModel).SetView(frameworkElement);
 
             return frameworkElement;
         }

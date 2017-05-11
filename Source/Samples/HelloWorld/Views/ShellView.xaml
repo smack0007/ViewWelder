@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:HelloWorld.Views"
         xmlns:vw="clr-namespace:ViewWelder;assembly=ViewWelder"
         mc:Ignorable="d"
-        Title="ShellView" Width="800" Height="600">
+        Title="{Binding Title}" Width="800" Height="600">
     <Grid>
         <TabControl ItemsSource="{Binding People}" SelectedItem="{Binding SelectedPerson}">
             <TabControl.ContentTemplate>
