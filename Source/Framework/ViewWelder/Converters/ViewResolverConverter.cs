@@ -8,11 +8,7 @@ namespace ViewWelder.Converters
     public class ViewResolverConverter : IValueConverter
     {
         private IViewResolver viewResolver;
-
-        public ViewResolverConverter()
-        {
-        }
-
+                
         private void EnsureViewResolver()
         {
             if (this.viewResolver == null)

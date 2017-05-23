@@ -10,7 +10,7 @@
     <Grid>
         <TabControl ItemsSource="{Binding People}" SelectedItem="{Binding SelectedPerson}">
             <TabControl.ContentTemplate>
-                <vw:ResolveViewDataTemplate Path="." Mode="TwoWay" />
+                <vw:ResolveViewDataTemplate />
             </TabControl.ContentTemplate>
         </TabControl>
     </Grid>

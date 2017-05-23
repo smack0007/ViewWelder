@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ViewWelder;
+﻿using ViewWelder;
 
 namespace HelloWorld.ViewModels
 {
@@ -22,6 +17,7 @@ namespace HelloWorld.ViewModels
                 {
                     this.firstName = value;
                     this.NotifyOfPropertyChange(nameof(this.FirstName));
+                    this.NotifyOfPropertyChange(nameof(this.CanSayHello));
                 }
             }
         }
@@ -36,10 +32,18 @@ namespace HelloWorld.ViewModels
                 {
                     this.lastName = value;
                     this.NotifyOfPropertyChange(nameof(this.LastName));
+                    this.NotifyOfPropertyChange(nameof(this.CanSayHello));
                 }
             }
         }
 
+        public bool CanSayHello => !string.IsNullOrEmpty(this.FirstName) && !string.IsNullOrEmpty(this.LastName);
+
         public override string ToString() => $"{this.LastName}, {this.FirstName}";
+
+        public void SayHello()
+        {
+            this.DialogPresenter.ShowInformationMessage($"Hello {this.ToString()}!", "Hello");
+        }
     }
 }

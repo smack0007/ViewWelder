@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HelloWorld.Views"
+             xmlns:vw="clr-namespace:ViewWelder;assembly=ViewWelder"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <StackPanel Orientation="Vertical" Margin="5">
@@ -30,6 +31,10 @@
         <StackPanel Orientation="Horizontal">
             <TextBlock Grid.Column="0" Grid.Row="1" Text="Last Name:" />
             <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding LastName}" />
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal">
+            <Button Padding="2" Click="{vw:EventBinding SayHello}" IsEnabled="{Binding CanSayHello}">Say Hello</Button>
         </StackPanel>
     </StackPanel>
 </UserControl>

@@ -1,2 +1,10 @@
-- Abstraction for Dialogs.
-- ViewResolverConverter as singleton?
+- IDialogPresenter
+    - Error
+    - Question
+    - Yes / No / Cancel
+
+- EventBindingContext
+    - Don't call the handler method via reflection every time.
+    - Pass parameters to handler method.
+
+- Move ViewResolverConverter to root namespace.

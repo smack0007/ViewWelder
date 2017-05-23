@@ -49,6 +49,8 @@ namespace ViewWelder
 
             frameworkElement.DataContext = viewModel;
 
+            viewModel.ViewContext = new ViewContext(frameworkElement);
+
             if (viewModel is IViewAware)
                 ((IViewAware)viewModel).SetView(frameworkElement);
 
