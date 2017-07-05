@@ -21,7 +21,7 @@ namespace ViewWelder
 
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
-            if (string.IsNullOrEmpty(HandlerMethodName))
+            if (string.IsNullOrEmpty(this.HandlerMethodName))
                 throw new ViewWelderException($"The {nameof(this.HandlerMethodName)} property is not set.");
 
             var target = (IProvideValueTarget)serviceProvider.GetService(typeof(IProvideValueTarget));

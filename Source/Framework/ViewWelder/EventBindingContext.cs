@@ -7,7 +7,6 @@ namespace ViewWelder
     public class EventBindingContext
     {
         private readonly FrameworkElement view;
-        private readonly EventInfo @event;
         private readonly string handlerMethodName;
 
         internal EventBindingContext(FrameworkElement view, string handlerMethodName)

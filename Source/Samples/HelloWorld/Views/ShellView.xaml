@@ -8,10 +8,15 @@
         mc:Ignorable="d"
         Title="{Binding Title}" Width="800" Height="600">
     <Grid>
-        <TabControl ItemsSource="{Binding People}" SelectedItem="{Binding SelectedPerson}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="25" />
+        </Grid.RowDefinitions>
+        <TabControl Grid.Row="0" ItemsSource="{Binding People}" SelectedItem="{Binding SelectedPerson}">
             <TabControl.ContentTemplate>
                 <vw:ResolveViewDataTemplate />
             </TabControl.ContentTemplate>
         </TabControl>
+        <TextBlock Grid.Row="1" Text="{vw:MethodBinding GetStatus}" VerticalAlignment="Center" />
     </Grid>
 </Window>

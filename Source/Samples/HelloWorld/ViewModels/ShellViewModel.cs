@@ -43,6 +43,7 @@ namespace HelloWorld.ViewModels
                 {
                     this.selectedPerson = value;
                     this.NotifyOfPropertyChange(nameof(this.SelectedPerson));
+                    this.NotifyOfPropertyChange(nameof(this.GetStatus));
                 }
             }
         }
@@ -62,6 +63,11 @@ namespace HelloWorld.ViewModels
         private void View_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             this.Title = $"Hello World! {this.view.Width}x{this.view.Height}";
+        }
+
+        public string GetStatus()
+        {
+            return $"Editing {this.selectedPerson.FirstName} {this.selectedPerson.LastName}...";
         }
     }
 }
