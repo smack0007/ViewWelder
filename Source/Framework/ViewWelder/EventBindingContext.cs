@@ -10,10 +10,9 @@ namespace ViewWelder
         private readonly EventInfo @event;
         private readonly string handlerMethodName;
 
-        internal EventBindingContext(FrameworkElement view, EventInfo @event, string handlerMethodName)
+        internal EventBindingContext(FrameworkElement view, string handlerMethodName)
         {
             this.view = view;
-            this.@event = @event;
             this.handlerMethodName = handlerMethodName;
         }
 
@@ -22,7 +21,7 @@ namespace ViewWelder
             if (this.view.DataContext == null)
                 return;
 
-            var method = this.view.DataContext.GetType().GetMethod(handlerMethodName);
+            var method = this.view.DataContext.GetType().GetMethod(this.handlerMethodName);
 
             method?.Invoke(this.view.DataContext, new object[] { });
         }

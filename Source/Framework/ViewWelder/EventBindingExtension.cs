@@ -29,14 +29,14 @@ namespace ViewWelder
             var view = target.TargetObject as FrameworkElement;
 
             if (view == null)
-                throw new ViewWelderException($"The target object must be an instance of ${nameof(FrameworkElement)}.");
+                throw new ViewWelderException($"The target object must be an instance of {nameof(FrameworkElement)}.");
 
             var @event = target.TargetProperty as EventInfo;
 
             if (@event == null)
-                throw new ViewWelderException("The target property must be an Event.");
+                throw new ViewWelderException($"The target property must be an instance of {nameof(EventInfo)}.");
 
-            var context = new EventBindingContext(view, @event, this.HandlerMethodName);
+            var context = new EventBindingContext(view, this.HandlerMethodName);
             return (RoutedEventHandler)context.View_Event;
         }
     }
