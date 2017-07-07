@@ -13,7 +13,7 @@ namespace ViewWelder
 
         public void ShowInformationMessage(string message, string title)
         {
-            var owner = VisualTreeHelperEx.GetAncestor<Window>(this.element);
+            var owner = this.element.GetVisualAncestor<Window>();
 
             if (owner != null)
             {

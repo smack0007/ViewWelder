@@ -49,6 +49,7 @@
     <Compile Include="Converters\ViewResolverConverter.cs" />
     <Compile Include="EventBindingContext.cs" />
     <Compile Include="EventBindingExtension.cs" />
+    <Compile Include="LogicalTreeExtensions.cs" />
     <Compile Include="MethodBindingContext.cs" />
     <Compile Include="MethodBindingExtension.cs" />
     <Compile Include="ViewContext.cs" />
@@ -67,7 +68,7 @@
     <Compile Include="ViewWelderBootstrapper.cs" />
     <Compile Include="ViewWelderException.cs" />
     <Compile Include="ViewWelderResourceKeys.cs" />
-    <Compile Include="VisualTreeHelperEx.cs" />
+    <Compile Include="VisualTreeExtensions.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
