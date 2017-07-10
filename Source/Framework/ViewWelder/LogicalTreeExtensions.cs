@@ -8,7 +8,7 @@ namespace ViewWelder
     {
         public static IEnumerable<DependencyObject> GetLogicalChildren(this DependencyObject element)
         {
-            return LogicalTreeHelper.GetChildren(element).Cast<DependencyObject>();
+            return LogicalTreeHelper.GetChildren(element).OfType<DependencyObject>();
         }
     }
 }

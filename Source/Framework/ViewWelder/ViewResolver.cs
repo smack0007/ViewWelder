@@ -42,7 +42,7 @@ namespace ViewWelder
 
             var frameworkElement = (FrameworkElement)view;
 
-            InitializeView(frameworkElement);
+            InitializeView(frameworkElement, frameworkElement);
 
             frameworkElement.DataContext = viewModel;
 
@@ -54,19 +54,28 @@ namespace ViewWelder
             return frameworkElement;
         }
 
-        private static void InitializeView(FrameworkElement view)
+        private static void InitializeView(FrameworkElement current, FrameworkElement root)
         {
-            var initializeComponentMethod = view.GetType().GetMethods().SingleOrDefault(x =>
+            var initializeComponentMethod = current.GetType().GetMethods().SingleOrDefault(x =>
                 x.Name == "InitializeComponent" &&
                 x.ReturnType == typeof(void) &&
                 !x.GetParameters().Any());
 
             if (initializeComponentMethod != null)
-                initializeComponentMethod.Invoke(view, null);
-
-            foreach (var child in view.GetLogicalChildren().OfType<FrameworkElement>())
             {
-                InitializeView(child);
+                try
+                {
+                    initializeComponentMethod.Invoke(current, null);
+                }
+                catch (Exception ex)
+                {
+                    throw new ViewResolverException($"Failed while calling InitializeComponent on type '{current.GetType()}' while initializing view '{root.GetType()}'.", ex);
+                }
+            }
+
+            foreach (var child in current.GetLogicalChildren().OfType<FrameworkElement>())
+            {
+                InitializeView(child, root);
             }
         }
     }
