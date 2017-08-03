@@ -8,8 +8,9 @@ namespace ViewWelder
         protected ViewWelderBootstrapper()
         {
             Application.Current.Startup += this.Application_Startup;
+            Application.Current.Exit += this.Application_Exit;
         }
-        
+
         protected virtual ViewResolver CreateViewResolver() => new ViewResolver();
 
         protected abstract ViewModel CreateRootViewModel();
@@ -39,7 +40,16 @@ namespace ViewWelder
             Application.Current.MainWindow = window;
         }
 
+        private void Application_Exit(object sender, ExitEventArgs e)
+        {
+            this.OnExit(e);
+        }
+
         protected virtual void OnStartup(StartupEventArgs e)
+        {
+        }
+
+        protected virtual void OnExit(ExitEventArgs e)
         {
         }
     }
