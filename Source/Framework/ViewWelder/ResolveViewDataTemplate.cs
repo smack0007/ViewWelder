@@ -7,7 +7,7 @@ namespace ViewWelder
 {
     public class ResolveViewDataTemplate : DataTemplate
     {
-        private readonly Binding binding;
+        private readonly System.Windows.Data.Binding binding;
 
         public PropertyPath Path
         {

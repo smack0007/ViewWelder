@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using ViewWelder;
@@ -30,7 +31,8 @@ namespace HelloWorld.ViewModels
         {
             new PersonViewModel() { FirstName = "Zachary", LastName = "Snow" },
             new PersonViewModel() { FirstName = "Daniela", LastName = "Snow" },
-            new PersonViewModel() { FirstName = "Hannah", LastName = "Snow" }
+            new PersonViewModel() { FirstName = "Hannah", LastName = "Snow" },
+            new PersonViewModel() { FirstName = "Henry", LastName = "Snow" }
         };
 
         public PersonViewModel SelectedPerson
@@ -41,7 +43,18 @@ namespace HelloWorld.ViewModels
             {
                 if (value != this.selectedPerson)
                 {
+                    if (this.selectedPerson != null)
+                    {
+                        this.selectedPerson.PropertyChanged -= this.SelectedPerson_PropertyChanged;
+                    }
+
                     this.selectedPerson = value;
+
+                    if (this.selectedPerson != null)
+                    {
+                        this.selectedPerson.PropertyChanged += this.SelectedPerson_PropertyChanged;
+                    }
+
                     this.NotifyOfPropertyChange(nameof(this.SelectedPerson));
                     this.NotifyOfPropertyChange(nameof(this.GetStatus));
                 }
@@ -65,9 +78,17 @@ namespace HelloWorld.ViewModels
             this.Title = $"Hello World! {this.view.Width}x{this.view.Height}";
         }
 
+        private void SelectedPerson_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(PersonViewModel.ToString))
+            {
+                this.NotifyOfPropertyChange(nameof(this.GetStatus));
+            }
+        }
+
         public string GetStatus()
         {
-            return $"Editing {this.selectedPerson.FirstName} {this.selectedPerson.LastName}...";
+            return $"Editing {this.selectedPerson.ToString()}...";
         }
     }
 }

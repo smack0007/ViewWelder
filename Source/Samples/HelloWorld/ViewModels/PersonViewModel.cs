@@ -18,6 +18,7 @@ namespace HelloWorld.ViewModels
                     this.firstName = value;
                     this.NotifyOfPropertyChange(nameof(this.FirstName));
                     this.NotifyOfPropertyChange(nameof(this.CanSayHello));
+                    this.NotifyOfPropertyChange(nameof(this.ToString));
                 }
             }
         }
@@ -33,11 +34,16 @@ namespace HelloWorld.ViewModels
                     this.lastName = value;
                     this.NotifyOfPropertyChange(nameof(this.LastName));
                     this.NotifyOfPropertyChange(nameof(this.CanSayHello));
+                    this.NotifyOfPropertyChange(nameof(this.ToString));
                 }
             }
         }
 
         public bool CanSayHello => !string.IsNullOrEmpty(this.FirstName) && !string.IsNullOrEmpty(this.LastName);
+
+        public PersonViewModel()
+        {
+        }
 
         public override string ToString() => $"{this.LastName}, {this.FirstName}";
 

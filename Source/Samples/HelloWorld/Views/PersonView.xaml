@@ -25,16 +25,16 @@
         
         <StackPanel Orientation="Horizontal">
             <TextBlock Grid.Column="0" Grid.Row="0" Text="First Name:" />
-            <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding FirstName}" />
+            <TextBox Grid.Column="1" Grid.Row="0" Text="{vw:Binding FirstName}" />
         </StackPanel>
 
         <StackPanel Orientation="Horizontal">
             <TextBlock Grid.Column="0" Grid.Row="1" Text="Last Name:" />
-            <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding LastName}" />
+            <TextBox Grid.Column="1" Grid.Row="1" Text="{vw:Binding LastName}" />
         </StackPanel>
 
         <StackPanel Orientation="Horizontal">
-            <Button Padding="2" Click="{vw:EventBinding SayHello}" IsEnabled="{Binding CanSayHello}">Say Hello</Button>
+            <Button Padding="2" Click="{vw:EventBinding SayHello}" IsEnabled="{vw:Binding CanSayHello}">Say Hello</Button>
         </StackPanel>
     </StackPanel>
 </UserControl>

@@ -1,29 +1,29 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
 
 namespace ViewWelder
 {
-    public class MethodBindingExtension : MarkupExtension
+    public class BindingExtension : MarkupExtension
     {
-        [ConstructorArgument("methodName")]
-        public string MethodName { get; set; }
+        [DefaultValue(BindingMode.Default)]
+        public BindingMode Mode { get; set; } = BindingMode.Default;
 
-        public MethodBindingExtension()
+        public PropertyPath Path { get; set; }
+        
+        public BindingExtension()
         {
         }
 
-        public MethodBindingExtension(string methodName)
+        public BindingExtension(string path)
         {
-            this.MethodName = methodName;
+            this.Path = new PropertyPath(path);
         }
 
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
-            if (string.IsNullOrEmpty(this.MethodName))
-                throw new ViewWelderException($"The {nameof(this.MethodName)} property is not set.");
-
             var target = (IProvideValueTarget)serviceProvider.GetService(typeof(IProvideValueTarget));
 
             if (target.TargetObjectIsSharedDependencyProperty())
@@ -39,13 +39,26 @@ namespace ViewWelder
             if (property == null)
                 throw new ViewWelderException($"The target property must be an instance of {nameof(DependencyProperty)}.");
 
-            var context = new MethodBindingContext(view, this.MethodName);
+            var metadata = property.GetMetadata(view.GetType());
+
+            var mode = this.Mode;
+
+            //if (mode == BindingMode.Default)
+            //{
+            //    if (metadata.BindsTwoWayByDefault)
+            //    {
+            //        mode = BindingMode.TwoWay;
+            //    }
+            //    else
+            //    {
+            //        mode = BindingMode.OneWay;
+            //    }
+            //}
 
             var binding = new Binding()
             {
-                Source = context,
-                Path = new PropertyPath(nameof(context.Value)),
-                Mode = BindingMode.OneWay
+                Path = this.Path,
+                Mode = mode
             };
 
             return binding.ProvideValue(serviceProvider);

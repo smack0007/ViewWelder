@@ -26,6 +26,9 @@ namespace ViewWelder
 
             var target = (IProvideValueTarget)serviceProvider.GetService(typeof(IProvideValueTarget));
 
+            if (target.TargetObjectIsSharedDependencyProperty())
+                return this;
+
             var view = target.TargetObject as FrameworkElement;
 
             if (view == null)

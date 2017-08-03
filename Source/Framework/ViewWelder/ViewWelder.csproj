@@ -46,9 +46,11 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BindingExtension.cs" />
     <Compile Include="Converters\ViewResolverConverter.cs" />
     <Compile Include="EventBindingContext.cs" />
     <Compile Include="EventBindingExtension.cs" />
+    <Compile Include="IProvideValueTargetExtensions.cs" />
     <Compile Include="LogicalTreeExtensions.cs" />
     <Compile Include="MethodBindingContext.cs" />
     <Compile Include="MethodBindingExtension.cs" />
